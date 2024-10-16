@@ -14,4 +14,6 @@ use ComBank\Support\Traits\AmountValidationTrait;
 abstract class BaseTransaction
 {
     protected $amount;
+
+    use AmountValidationTrait;
 }
