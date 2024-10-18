@@ -19,6 +19,8 @@ use ComBank\Support\Traits\AmountValidationTrait;
 use ComBank\Transactions\Contracts\BankTransactionInterface;
 use PHPUnit\TextUI\XmlConfiguration\ValidationResult;
 
+use function PHPUnit\Framework\throwException;
+
 class BankAccount implements BackAccountInterface
 {
     private $balance;
@@ -29,17 +31,25 @@ class BankAccount implements BackAccountInterface
         
         $this->balance = $balance;
         $this->status = BackAccountInterface::STATUS_OPEN;
+        $this->overdraft = new NoOverdraft;
+
     }
 
     public function transaction(BankTransactionInterface $transaction):void{
-        $transaction->applyTransaction($this);
+        $this->status==BackAccountInterface::STATUS_CLOSED
+            ? throw new BankAccountException("Cuenta cerrada")
+            : $transaction->applyTransaction($this);
     }
 
     public function openAccount() : bool{
         return $this->status == BackAccountInterface::STATUS_OPEN;
     }
     public function reopenAccount() : void{
-        $this->status = BackAccountInterface::STATUS_OPEN;
+        if($this->status == BackAccountInterface::STATUS_OPEN){
+            throw new BankAccountException("Account is already open");
+        }else{
+            $this->status = BackAccountInterface::STATUS_OPEN;
+        }
     }
     public function closeAccount() : void{
         $this->status = BackAccountInterface::STATUS_CLOSED;
@@ -51,9 +61,9 @@ class BankAccount implements BackAccountInterface
         return $this->overdraft;
     }
     public function applyOverdraft(OverdraftInterface $overdraft) : void{
-        
+        $this->overdraft=$overdraft;
     }
     public function setBalance(float $balance) : void{
         $this->balance = $balance;
     }
-}
+} 

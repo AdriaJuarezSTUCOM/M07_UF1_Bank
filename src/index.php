@@ -43,6 +43,8 @@ try {
     pl('My new balance after withdrawal (-25) : ' . $bankAccount1->getBalance());
 
     // withdrawal -600
+    pl('Doing transaction deposit (-600) with current balance ' . $bankAccount1->getBalance());
+    $bankAccount1->transaction(new WithdrawTransaction(600));
     pl('Doing transaction withdrawal (-600) with current balance ' . $bankAccount1->getBalance());
 
 } catch (ZeroAmountException $e) {
@@ -54,7 +56,8 @@ try {
 }
 pl('My balance after failed last transaction : ' . $bankAccount1->getBalance());
 
-
+$bankAccount1->closeAccount();
+pl("My account is now closed");
 
 
 //---[Bank account 2]---/

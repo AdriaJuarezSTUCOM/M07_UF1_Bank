@@ -1,5 +1,6 @@
 <?php namespace ComBank\OverdraftStrategy;
       use ComBank\OverdraftStrategy\Contracts\OverdraftInterface;
+      use ComBank\Exceptions\InvalidOverdraftFundsException;
 
 /**
  * Created by VS Code.
@@ -11,9 +12,9 @@
 class NoOverdraft implements OverdraftInterface
 {
     public function isGrantOverdraftFunds(float $amount): bool{
-
+        return false;
     }
     public function getOverdraftFundsAmmount(): float{
-        
+        return 0.0;
     }
 }
