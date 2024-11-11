@@ -8,31 +8,32 @@
  */
 
 use ComBank\Exceptions\BankAccountException;
-use ComBank\Exceptions\InvalidArgsException;
-use ComBank\Exceptions\ZeroAmountException;
 use ComBank\OverdraftStrategy\NoOverdraft;
 use ComBank\Bank\Contracts\BackAccountInterface;
-use ComBank\Exceptions\FailedTransactionException;
-use ComBank\Exceptions\InvalidOverdraftFundsException;
 use ComBank\OverdraftStrategy\Contracts\OverdraftInterface;
 use ComBank\Support\Traits\AmountValidationTrait;
+use ComBank\Support\Traits\APITrait;
 use ComBank\Transactions\Contracts\BankTransactionInterface;
 use PHPUnit\TextUI\XmlConfiguration\ValidationResult;
+use ComBank\Bank\InternationalBankAccount;
 
 use function PHPUnit\Framework\throwException;
 
 class BankAccount implements BackAccountInterface
 {
-    private $balance;
-    private $status;
-    private $overdraft;
+    protected $personHolder;
+    protected $balance;
+    protected $status;
+    protected $overdraft;
+    protected $currency;
     
-    public function __construct($balance) {
+    public function __construct($balance = 100, $personHolder = null) {
         
+        $this->personHolder = $personHolder;
         $this->balance = $balance;
         $this->status = BackAccountInterface::STATUS_OPEN;
         $this->overdraft = new NoOverdraft;
-
+        
     }
 
     public function transaction(BankTransactionInterface $transaction):void{
@@ -64,6 +65,9 @@ class BankAccount implements BackAccountInterface
     }
     public function getOverdraft() : OverdraftInterface{
         return $this->overdraft;
+    }
+    public function getCurrency() : string{
+        return ($this->balance . " " . $this->currency);
     }
     public function applyOverdraft(OverdraftInterface $overdraft) : void{
         $this->overdraft=$overdraft;

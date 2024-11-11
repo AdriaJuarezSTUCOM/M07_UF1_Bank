@@ -8,6 +8,8 @@
  */
 
 use ComBank\Bank\BankAccount;
+use ComBank\Bank\NationalBankAccount;
+use ComBank\Bank\InternationalBankAccount;
 use ComBank\OverdraftStrategy\SilverOverdraft;
 use ComBank\Exceptions\InvalidOverdraftFundsException;
 use ComBank\Transactions\DepositTransaction;
@@ -111,3 +113,16 @@ try {
 } catch (BankAccountException $e) {
     pl($e->getMessage());
 }
+
+
+//---[Start testing national account (No conversion)]---/
+pl('--------- [Start testing national account (No conversion)] --------');
+$nationalBankAccount = new NationalBankAccount(500.0);
+pl("My balance: " . $nationalBankAccount->getCurrency());
+
+//---[Start testing international account (Dollar conversion)]---/
+pl('--------- [Start testing international account (Dollar conversion)] --------');
+$internationalBankAccount = new InternationalBankAccount(300.0);
+pl("My balance: " . $internationalBankAccount->getCurrency());
+pl("Converting balance to Dollars (Rate: 1 USD = 1.10 €)");
+pl("Converted balance: " . $internationalBankAccount->getConvertedCurrency());
